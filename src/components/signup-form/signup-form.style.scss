@@ -1,0 +1,21 @@
+.sign-up-container {
+  display: flex;
+  flex-direction: column;
+  //width: 380px;
+
+  h2 {
+    margin: 10px 0;
+  }
+
+  .signup-error {
+    background: rgba(248, 61, 61, 0.3);
+    padding: .5rem 1rem;
+    color: #f83d3d;
+  }
+
+  form .actions {
+    display: grid;
+    grid-template-columns: 1fr minmax(max-content, 1fr);
+    gap: 1rem;
+  }
+}

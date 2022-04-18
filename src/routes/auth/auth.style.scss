@@ -1,0 +1,16 @@
+.Auth {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  justify-content: center;
+  padding: 2rem;
+}
+
+@media (min-width: 900px) {
+  .Auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+  }
+}

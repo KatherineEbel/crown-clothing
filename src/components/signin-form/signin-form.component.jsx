@@ -16,8 +16,7 @@ export default function SignInForm () {
   const [signInError, setSignInError] = useState(null);
 
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    console.log(user);
+    await signInWithGooglePopup();
   }
 
   // rH6cC9yg@ipPP7c
@@ -28,8 +27,7 @@ export default function SignInForm () {
       return alert('form not valid')
     }
     try {
-      let {user} = await signInAuthUserWithEmailAndPassword(...Object.values(fields))
-      console.log(user);
+      await signInAuthUserWithEmailAndPassword(...Object.values(fields))
       setFields(defaultFields);
     } catch (e) {
       let message;

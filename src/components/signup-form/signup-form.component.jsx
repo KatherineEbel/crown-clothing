@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {
   createAuthUserWithEmailAndPassword,
-  createUserDocumentFromAuth, signInWithGooglePopup
+  signInWithGooglePopup
 } from "../../utils/firebase/firebase.utils";
 import FormInput from "../form-input/form-input.component";
 import './signup-form.style.scss'
@@ -19,10 +19,8 @@ export default function SignUpForm() {
 
   const signUpWithGoogle = async () => {
     setSignUpError(null);
-    let user;
     try {
-      user = await signInWithGooglePopup();
-      await createUserDocumentFromAuth(user);
+      await signInWithGooglePopup();
     } catch (e) {
       setSignUpError('OOPS! Something went wrong')
       console.log(e)
@@ -38,8 +36,7 @@ export default function SignUpForm() {
       return alert('form not valid')
     }
     try {
-      let {user} = await createAuthUserWithEmailAndPassword(email, password)
-      await createUserDocumentFromAuth(user, {displayName})
+      await createAuthUserWithEmailAndPassword(email, password, displayName)
       setFields(defaultFields);
     } catch (e) {
       setSignUpError('OOPS! Something went wrong')
@@ -58,10 +55,14 @@ export default function SignUpForm() {
       <p>Sign up with your email and password</p>
       {signUpError ? (<p className='signup-error'>{signUpError}</p>) : null}
       <form method="post" onSubmit={onSubmit} noValidate>
-        <FormInput value={fields.displayName} name='displayName' type='text' label='Display Name' onChange={onInputChange} required />
-        <FormInput value={fields.email} name='email' type='email' label='Email' pattern='.+@.+\..+' onChange={onInputChange} required />
-        <FormInput value={fields.password} name='password' type='password' label='Password' minLength={6} onChange={onInputChange} required />
-        <FormInput value={fields.confirmPassword} name='confirmPassword' type='password' label='Confirm Password' minLength={6} onChange={onInputChange} required />
+        <FormInput value={fields.displayName} name='displayName' type='text' label='Display Name'
+                   onChange={onInputChange} required/>
+        <FormInput value={fields.email} name='email' type='email' label='Email' pattern='.+@.+\..+'
+                   onChange={onInputChange} required/>
+        <FormInput value={fields.password} name='password' type='password' label='Password' minLength={6}
+                   onChange={onInputChange} required/>
+        <FormInput value={fields.confirmPassword} name='confirmPassword' type='password' label='Confirm Password'
+                   minLength={6} onChange={onInputChange} required/>
         <div className="actions">
           <Button type='submit'>
             Submit

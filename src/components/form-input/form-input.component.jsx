@@ -19,7 +19,6 @@ export default function FormInput ({label, id = '', ...rest}) {
 
   function onFocus(e) {
     const label = e.currentTarget.previousElementSibling;
-    console.log(e.currentTarget, label)
     if (!label.classList.contains('shrink')) {
       label.classList.toggle('shrink')
     }

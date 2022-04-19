@@ -5,10 +5,12 @@ import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithRedirect,
   signInWithPopup,
-  GoogleAuthProvider,
+  signOut,
 } from 'firebase/auth'
 
 import {
@@ -37,37 +39,52 @@ provider.setCustomParameters({
 });
 
 export const auth = getAuth(app);
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = async () => {
+  const {user} = signInWithPopup(auth, provider)
+  await createUserDocumentFromAuth(user, user.displayName)
+};
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
 export const db = getFirestore(app);
 
-export const createUserDocumentFromAuth = async (userAuth, options = {}) => {
-  if (!userAuth) return;
-
+export const getUserDocFromAuth = async (userAuth) => {
+  if (!userAuth) return null;
   const userDocRef = doc(db, 'users', userAuth.uid)
   const userSnapshot = await getDoc(userDocRef);
-  if (userSnapshot.exists()) return userDocRef;
+  return userSnapshot.exists() ? userDocRef : null;
+}
 
-  const { displayName, email } = userAuth
+export const createUserDocumentFromAuth = async (userAuth, displayName = null) => {
+  let userDocRef = await getUserDocFromAuth(userAuth);
+  if (userDocRef) return userDocRef;
+
+  const { displayName: name, email } = userAuth
   const createdAt = new Date();
   try {
     await setDoc(userDocRef, {
-      displayName,
+      displayName: name || displayName,
       email,
       createdAt,
-      ...options,
     })
   } catch (e) {
     console.error('error creating the user', e.message)
   }
 }
 
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
+export const createAuthUserWithEmailAndPassword = async (email, password, displayName) => {
   if (!email || !password) return null;
-  return await createUserWithEmailAndPassword(auth, email, password);
+  let user = await createUserWithEmailAndPassword(auth, email, password);
+  await createUserDocumentFromAuth(user, displayName)
 }
 
 export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return null;
   return await signInWithEmailAndPassword(auth, email, password);
+}
+
+export const signOutAuthUser = async () => {
+  await signOut(auth);
+}
+
+export const listenForAuthChange = (callback) => {
+  return onAuthStateChanged(auth, callback)
 }

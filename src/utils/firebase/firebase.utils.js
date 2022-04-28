@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import {initializeApp} from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import {
@@ -8,17 +8,12 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithRedirect,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from 'firebase/auth'
 
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-} from 'firebase/firestore';
+import {collection, doc, getDoc, getDocs, getFirestore, query, setDoc, writeBatch,} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -87,4 +82,28 @@ export const signOutAuthUser = async () => {
 
 export const listenForAuthChange = (callback) => {
   return onAuthStateChanged(auth, callback)
+}
+
+/*  Products */
+
+export const addCollectionAndDocuments = async (collectionKey, objects) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+  objects.forEach(obj => {
+    const docRef = doc(collectionRef, obj.title.toLowerCase());
+    batch.set(docRef, obj);
+  });
+  await batch.commit();
+  console.log('done');
+}
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const categoryQuery = query(collectionRef);
+  const querySnapshot = await getDocs(categoryQuery);
+  return querySnapshot.docs.reduce((acc, snapshot) => {
+    const {title, items} = snapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
 }

@@ -1,0 +1,30 @@
+.checkout {
+  display: flex;
+  place-items: center;
+  min-height: 100vh;
+
+  table {
+    flex: 1;
+  }
+
+  .heading {
+    border-bottom: 1px solid darkgrey;
+    display: flex;
+    padding: 10px 0;
+  }
+
+  .heading th {
+    flex: 1;
+  }
+
+  tfoot tr {
+    display: flex;
+    padding: 1rem 0;
+  }
+
+  tfoot tr td {
+    font-size: 1.5rem;
+    margin-left: auto;
+  }
+
+}

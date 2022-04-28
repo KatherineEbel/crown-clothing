@@ -8,7 +8,7 @@ export default function CartIcon () {
   return (
     <div className='cart-icon' onClick={toggleOpen}>
       <ShoppingIcon className='shopping-icon'/>
-      <span>{itemCount}</span>
+      <span className='item-count'>{itemCount}</span>
     </div>
   )
 }

@@ -4,14 +4,8 @@ import CheckoutItem from "../../components/checkout-item/checkout-item.component
 import './checkout.styles.scss'
 
 export default function Checkout () {
-  const { items } = useContext(CartContext);
+  const { items, total } = useContext(CartContext);
 
-  const total = (() => {
-    return items.reduce((acc, item) => {
-      const { product, quantity} = item
-      return acc + (product.price * quantity)
-    }, 0)
-  })()
   return items.length ? (
     <main className='checkout'>
       <table>
@@ -25,7 +19,7 @@ export default function Checkout () {
         </tr>
         </thead>
         <tbody>
-        { items.map(({product, quantity}) => <CheckoutItem key={product.id} product={product} quantity={ quantity}/>)}
+        { items.map((product) => <CheckoutItem key={product.id} product={product}/>)}
         </tbody>
         <tfoot>
         <tr>

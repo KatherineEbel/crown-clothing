@@ -2,9 +2,9 @@ import './checkout-item.styles.scss'
 import {useContext} from "react";
 import {CartContext} from "../../contexts/cart.context";
 
-export default function CheckoutItem({product, quantity}) {
+export default function CheckoutItem({product}) {
   const {decrementQuantity, incrementQuantity, removeItem} = useContext(CartContext);
-  const {id, name, imageUrl, price} = product;
+  const {id, name, imageUrl, price, quantity} = product;
 
   const onClickDecrement = () => decrementQuantity(id)
   const onClickIncrement = () => incrementQuantity(id)

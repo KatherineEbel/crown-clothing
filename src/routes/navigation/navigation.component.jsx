@@ -1,18 +1,20 @@
 import {Outlet} from "react-router-dom";
-import {useContext} from "react";
 import {Navigation as NavContainer, LogoContainer, NavLinks, NavLink } from './navigation.styles'
 import {ReactComponent as CrownLogo} from '../../assets/crown.svg'
-import {UserContext} from "../../contexts/user.context";
 import {signOutAuthUser} from "../../utils/firebase/firebase.utils";
 import CartIcon from "../../components/cart-icon/cart-icon.component";
 import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component";
+import {useDispatch, useSelector} from "react-redux";
+import {setCurrentUser} from "../../store/user/user.action";
+import {selectCurrentUser} from "../../store/user/user.selector";
 
 export default function Navigation() {
-  const {currentUser, setCurrentUser} = useContext(UserContext);
+  const currentUser = useSelector(selectCurrentUser)
+  const dispatch = useDispatch()
   const onLogOut = async () => {
     try {
       await signOutAuthUser();
-      setCurrentUser(null);
+      dispatch(setCurrentUser(null));
     } catch (e) {
       console.log(e.code)
     }

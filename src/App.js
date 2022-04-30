@@ -6,9 +6,21 @@ import Navigation from "./routes/navigation/navigation.component";
 import Auth from "./routes/auth/auth.component";
 import Shop from "./routes/shop/shop.component";
 import Checkout from "./routes/checkout/checkout.component";
+import {useEffect} from "react";
+import {getUserDocFromAuth, listenForAuthChange} from "./utils/firebase/firebase.utils";
+import {setCurrentUser} from "./store/user/user.action";
+import {useDispatch} from "react-redux";
 
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    return listenForAuthChange(async (user) => {
+      dispatch(setCurrentUser(user ? await getUserDocFromAuth(user) : null))
+    });
+  }, [dispatch])
+
   return (
     <Routes>
       <Route path='/' element={<Navigation/>}>

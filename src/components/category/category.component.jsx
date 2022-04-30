@@ -3,9 +3,11 @@ import './category.scss';
 import { useEffect, useState} from "react";
 import ProductCard from "../product-card/product-card.component";
 import {useSelector} from "react-redux";
-import {selectCategoriesMap} from "../../store/categories/category.selector";
+import {selectCategoriesLoading, selectCategoriesMap} from "../../store/categories/category.selector";
+import Spinner from "../spinner/spinner.component";
 
-export default function Category () {
+function Category () {
+  const loading = useSelector(selectCategoriesLoading)
   const categoriesMap = useSelector(selectCategoriesMap)
   const { category } = useParams();
   const [products, setProducts] = useState(categoriesMap[category]);
@@ -16,9 +18,18 @@ export default function Category () {
 
   return (
     <div className='category'>
+      <h2>{category.toUpperCase()}</h2>
       {
-        products?.map(product => <ProductCard key={product.id} product={product}/>)
+        loading ? (<Spinner/>) : (
+          <>
+            {
+              products?.map(product => <ProductCard key={product.id} product={product}/>)
+            }
+          </>
+        )
       }
     </div>
   )
 }
+
+export default Category;

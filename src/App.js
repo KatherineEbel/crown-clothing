@@ -9,13 +9,20 @@ import Checkout from "./routes/checkout/checkout.component";
 import {useEffect} from "react";
 import {checkUserSession } from "./store/user/user.action";
 import {useDispatch} from "react-redux";
+import {setCartOpen} from "./store/cart/cart.action";
 
 
 function App() {
   const dispatch = useDispatch();
 
+
   useEffect(() => {
+    const closeCartListener = (event) => {
+      if (event.target.closest('.cart-icon') !== null || event.target.closest('.cart-dropdown') !== null) return;
+      dispatch(setCartOpen(false));
+    }
     dispatch(checkUserSession());
+    document.addEventListener('click', closeCartListener)
   }, [dispatch])
 
   return (

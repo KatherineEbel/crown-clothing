@@ -1,6 +1,7 @@
 import {BaseButton, GoogleSignInButton, InvertedButton} from "./button.styles";
+import {SpinnerContainer} from "../spinner/spinner.styles";
 
-const BUTTON_TYPES = {
+export const BUTTON_TYPES = {
   base: 'base',
   google: 'google-sign-in',
   inverted: 'inverted',
@@ -14,11 +15,11 @@ const getButton = (buttonType = BUTTON_TYPES.base) =>
   }[buttonType])
 
 
-export default function Button({children, buttonType, ...otherProps}) {
+export default function Button({children, buttonType, disabled, ...otherProps}) {
   const CustomButton = getButton(buttonType)
   return (
     <CustomButton {...otherProps}>
-      {children}
+      { disabled ? (<SpinnerContainer width={'30px'} height={'30px'}/>) : children}
     </CustomButton>
   )
 }

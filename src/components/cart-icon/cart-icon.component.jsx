@@ -13,7 +13,7 @@ export default function CartIcon () {
   }
 
   return (
-    <Icon onClick={onClickIcon}>
+    <Icon className='cart-icon' onClick={onClickIcon}>
       <ShoppingIcon/>
       <ItemCount>{itemCount}</ItemCount>
     </Icon>

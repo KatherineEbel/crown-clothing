@@ -1,5 +1,7 @@
 import {CART_ACTION_TYPES} from "./cart.types";
 
+const { CLEAR, SET_CART_ITEMS, SET_OPEN} = CART_ACTION_TYPES
+
 const INITIAL_STATE = {
   items: {},
   open: false,
@@ -8,13 +10,15 @@ const INITIAL_STATE = {
 export const cartReducer = (state = INITIAL_STATE, action) => {
   const {type, payload} = action;
   switch (type) {
-    case CART_ACTION_TYPES.SET_CART_ITEMS:
+    case SET_CART_ITEMS:
       return {
         ...state,
         items: payload,
       }
-    case CART_ACTION_TYPES.SET_OPEN:
+    case SET_OPEN:
       return {...state, open: payload}
+    case CLEAR:
+      return {...state, items: {}}
     default: return state;
   }
 }

@@ -38,3 +38,5 @@ export const addToCart = (itemsMap, product) => {
   let quantity = itemsMap[product.id]?.quantity || 0;
   return createAction(CART_ACTION_TYPES.SET_CART_ITEMS, {...itemsMap, [id]: {...product, quantity: quantity + 1}})
 }
+
+export const clearCart = () => createAction(CART_ACTION_TYPES.CLEAR);

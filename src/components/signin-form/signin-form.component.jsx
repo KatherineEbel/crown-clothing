@@ -1,11 +1,9 @@
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 import {useState} from "react";
-import {
-  signInAuthUserWithEmailAndPassword,
-  signInWithGooglePopup
-} from "../../utils/firebase/firebase.utils";
 import './signin-form.style.scss'
+import {useDispatch} from "react-redux";
+import {emailSignInStart, googleSignInStart} from "../../store/user/user.action";
 
 export default function SignInForm () {
   const defaultFields = {
@@ -14,9 +12,10 @@ export default function SignInForm () {
   }
   const [fields, setFields] = useState(defaultFields);
   const [signInError, setSignInError] = useState(null);
+  const dispatch = useDispatch()
 
-  const signInWithGoogle = async () => {
-    await signInWithGooglePopup();
+  const onSignInWithGoogle = async () => {
+    dispatch(googleSignInStart())
   }
 
   // rH6cC9yg@ipPP7c
@@ -27,7 +26,7 @@ export default function SignInForm () {
       return alert('form not valid')
     }
     try {
-      await signInAuthUserWithEmailAndPassword(...Object.values(fields))
+      dispatch(emailSignInStart(...Object.values(fields)))
       setFields(defaultFields);
     } catch (e) {
       let message;
@@ -61,7 +60,7 @@ export default function SignInForm () {
           <Button type='submit'>
             Submit
           </Button>
-          <Button className='google' type='button' onClick={signInWithGoogle}>
+          <Button className='google' type='button' onClick={onSignInWithGoogle}>
             Sign in with google
           </Button>
         </div>

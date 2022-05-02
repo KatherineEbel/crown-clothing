@@ -1,11 +1,9 @@
 import {useState} from "react";
-import {
-  createAuthUserWithEmailAndPassword,
-  signInWithGooglePopup
-} from "../../utils/firebase/firebase.utils";
 import FormInput from "../form-input/form-input.component";
 import './signup-form.style.scss'
 import Button from "../button/button.component";
+import {useDispatch} from "react-redux";
+import {emailSignUpStart, googleSignUpStart} from "../../store/user/user.action";
 
 export default function SignUpForm() {
   const defaultFields = {
@@ -16,11 +14,13 @@ export default function SignUpForm() {
   }
   const [fields, setFields] = useState(defaultFields);
   const [signUpError, setSignUpError] = useState(null);
+  const dispatch = useDispatch()
 
-  const signUpWithGoogle = async () => {
+  const signUpWithGoogle = async (e) => {
+    e.preventDefault();
     setSignUpError(null);
     try {
-      await signInWithGooglePopup();
+      dispatch(googleSignUpStart())
     } catch (e) {
       setSignUpError('OOPS! Something went wrong')
       console.log(e)
@@ -36,7 +36,7 @@ export default function SignUpForm() {
       return alert('form not valid')
     }
     try {
-      await createAuthUserWithEmailAndPassword(email, password, displayName)
+      dispatch(emailSignUpStart(email, password, displayName))
       setFields(defaultFields);
     } catch (e) {
       setSignUpError('OOPS! Something went wrong')

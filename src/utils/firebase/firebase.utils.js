@@ -34,25 +34,29 @@ provider.setCustomParameters({
 });
 
 export const auth = getAuth(app);
+
 export const signInWithGooglePopup = async () => {
-  const {user} = signInWithPopup(auth, provider)
-  await createUserDocumentFromAuth(user, user.displayName)
+  const { user } = await signInWithPopup(auth, provider)
+  const {creationTime, lastSignInTime } = user.metadata;
+  if (creationTime === lastSignInTime) {
+    return await createUserDocumentFromAuth(user, user.displayName);
+  }
+  return getUserDoc(user.uid)
 };
+
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
 export const db = getFirestore(app);
 
-export const getUserDocFromAuth = async (userAuth) => {
-  if (!userAuth) return null;
-  const userDocRef = doc(db, 'users', userAuth.uid)
+export const getUserDoc = async (uid) => {
+  if (!uid) return null;
+  const userDocRef = doc(db, 'users', uid)
   const userSnapshot = await getDoc(userDocRef);
-  return userSnapshot.exists() ? userDocRef : null;
+  return userSnapshot.exists() ? userSnapshot : null;
 }
 
 export const createUserDocumentFromAuth = async (userAuth, displayName = null) => {
-  let userDocRef = await getUserDocFromAuth(userAuth);
-  if (userDocRef) return userDocRef;
-
-  const { displayName: name, email } = userAuth
+  const userDocRef = doc(db, 'users', userAuth.user.uid)
+  const { user: { displayName: name, email, uid } } = userAuth;
   const createdAt = new Date();
   try {
     await setDoc(userDocRef, {
@@ -63,25 +67,40 @@ export const createUserDocumentFromAuth = async (userAuth, displayName = null) =
   } catch (e) {
     console.error('error creating the user', e.message)
   }
+  return getUserDoc(uid);
 }
 
 export const createAuthUserWithEmailAndPassword = async (email, password, displayName) => {
   if (!email || !password) return null;
-  let user = await createUserWithEmailAndPassword(auth, email, password);
-  await createUserDocumentFromAuth(user, displayName)
+  let userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  return createUserDocumentFromAuth(userCredential, displayName)
 }
 
 export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return null;
-  return await signInWithEmailAndPassword(auth, email, password);
+  const {user} = await signInWithEmailAndPassword(auth, email, password);
+  return getUserDoc(user.uid);
 }
 
 export const signOutAuthUser = async () => {
-  await signOut(auth);
+  return signOut(auth);
 }
 
 export const listenForAuthChange = (callback) => {
   return onAuthStateChanged(auth, callback)
+}
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe();
+        resolve(userAuth);
+      },
+      reject,
+    )
+  })
 }
 
 /*  Products */
@@ -94,7 +113,6 @@ export const addCollectionAndDocuments = async (collectionKey, objects) => {
     batch.set(docRef, obj);
   });
   await batch.commit();
-  console.log('done');
 }
 
 export const getCategoriesAndDocuments = async () => {
